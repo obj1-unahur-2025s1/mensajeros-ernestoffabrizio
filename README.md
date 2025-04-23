@@ -2,7 +2,7 @@
 
 ### Ejercicio incremental: Polimorfismo - Colecciones - Colecciones con bloques 
 
-![](matrix.jpeg)
+![](matrix.jpg)
 
 ## Primera parte: Destinos y mensajeros
 
