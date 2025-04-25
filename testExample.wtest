@@ -1,9 +1,122 @@
-import example.pepita
-
-describe "group of tests for pepita" {
-
-  test "pepita has initial energy" {
-    assert.equals(100, pepita.energy())
+import mensajeros.*
+describe "primera parte" {
+  test "roberto puede llevar un paquete que esta pago en un camion acoplado" {
+    camion.acoplarAlCamion(1)
+    roberto.vehiculo(camion)
+    assert.that(
+      paquete.puedeSerEntregadoPor_A(roberto, brooklyn)
+    )
   }
-
+    test "neo con credito no puede llevar un paquete que no esta pago a la matrix" {
+    neo.cargarCreditos(1)
+    paquete.noEstaPago()
+    assert.notThat(
+      paquete.puedeSerEntregadoPor_A(neo, matrix)
+    )
+  }
+}
+describe "segunda parte"{
+  test "contratar a neo"{
+    empresa.contratarA(neo)
+    assert.that(empresa.listaDeContratados().contains(neo))
+  }
+  test "despedir a neo"{
+    empresa.contratarA(neo)
+    empresa.despedirA(neo)
+    assert.notThat(empresa.listaDeContratados().contains(neo))
+  }
+  test "despedir a todos los mensajeros"{
+    empresa.contratarA(neo)
+    empresa.contratarA(roberto)
+    empresa.despedirATodos()
+    assert.that(empresa.listaDeContratados().isEmpty())    
+  }
+  test "la mensajeria es grande"{
+    empresa.contratarA(neo)
+    empresa.contratarA(roberto)
+    empresa.contratarA(chuckNorris)
+    assert.that(empresa.laMensajeriaEsGrande())
+  }
+  test "el paquete puede ser entregado por el primer empleado de la empresa"{
+    empresa.contratarA(roberto)
+    empresa.contratarA(neo)
+    empresa.contratarA(chuckNorris)
+    assert.that(empresa.puedeSerEntregadoPorPrimerEmpleadoA(brooklyn))
+  }
+  test "el peso del ultimo mensajero"{
+    empresa.contratarA(neo)
+    empresa.contratarA(roberto)
+    assert.that(empresa.pesoDelUltimoMensajero()==95)
+  }
+}
+describe "tercera parte"{
+  test "el paquetonViajero puede ser entregado por algun empleado a brooklyn"{
+    empresa.contratarA(roberto)
+    empresa.contratarA(neo)
+    empresa.contratarA(chuckNorris)
+    paquetonViajero.pagarPaquete()
+    assert.that(empresa.alguienPuedeEntregarElPaqueteA(brooklyn, paquetonViajero))
+  }
+  test "los mensajeros que pueden entregar el paquetonViajero a brooklyn son neo y chuck norris"{
+    camion.acoplarAlCamion(2)
+    roberto.vehiculo(camion)
+    empresa.contratarA(roberto)
+    empresa.contratarA(neo)
+    empresa.contratarA(chuckNorris)
+    paquetonViajero.pagarPaquete()
+    assert.equals([neo,chuckNorris],
+    empresa.quienesPuedenEntregarElPaqueteA(brooklyn, paquetonViajero))
+  }
+  test "la mensajeria tiene sobrepeso"{
+    camion.acoplarAlCamion(2)
+    roberto.vehiculo(camion)
+    empresa.contratarA(roberto)
+    empresa.contratarA(roberto)
+    empresa.contratarA(neo)
+    empresa.contratarA(chuckNorris)
+    assert.that(
+      empresa.tieneSobrepeso()
+    )
+  }
+  test "enviar paquete a brooklyn"{
+    empresa.contratarA(neo)
+    empresa.enviarPaqueteSiEsPosibleA(paquete, brooklyn)
+    assert.equals(
+      150, empresa.facturacionTotal()
+    )
+  }
+  test "facturacion de la empresa tras paquete y paquetonViajero"{
+    empresa.contratarA(neo)
+    empresa.enviarPaqueteSiEsPosibleA(paquete, brooklyn)
+    paquetonViajero.pagarPaquete()
+    empresa.enviarPaqueteSiEsPosibleA(paquetonViajero, brooklyn)
+    assert.equals(
+      450, empresa.facturacionTotal()
+    )
+  }
+    test "enviar conjunto de paquetes"{
+    empresa.contratarA(neo)
+    paquetonViajero.pagarPaquete()
+    const conjuntoDePaquetes = [paquete, paquetonViajero, paquetito]
+    empresa.enviarConjuntoDePaquetesA(conjuntoDePaquetes, brooklyn)
+    assert.equals(
+      550, empresa.facturacionTotal()
+    )
+  }
+  test"enviar el paquete pendiente mas caro"{
+    camion.acoplarAlCamion(2)
+    roberto.vehiculo(camion)
+    empresa.contratarA(roberto)
+    empresa.enviarPaqueteSiEsPosibleA(paquetonViajero, brooklyn)
+    empresa.enviarPaqueteSiEsPosibleA(paquete, brooklyn)
+    paquetonViajero.pagarPaquete()
+    empresa.contratarA(neo)
+    empresa.enviarPaqueteSiEsPosibleA(empresa.paquetePendienteMasCaro(), brooklyn)
+    assert.equals([paquetonViajero, paquete], empresa.paquetesPendientes())
+  }
+  test"nuevo paquete y nuevo mensajero"{
+    empresa.contratarA(jesus)
+    jesus.resucitar()
+    assert.that(empresa.enviarPaqueteSiEsPosibleA(cajaDivina, brooklyn) == "Se envió correctamente")
+  }
 }
